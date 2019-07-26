@@ -7,7 +7,7 @@ set -eu
 mkdir -p ./dist
 
 gcc demo.c rp_gen.c watt_math.c \
-  -DSOKOL_METAL=1 \
+	-DSOKOL_METAL=1 \
 	-o ./dist/demo \
 	-ObjC \
 	-fobjc-arc \

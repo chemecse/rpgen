@@ -6,12 +6,72 @@
 #include "rp_gen.h"
 #include "demo.glsl.h"
 
-static const int SAMPLE_COUNT = 4;
-static float rx, ry;
-static sg_pipeline pip;
-static sg_bindings bind;
+#define MIN_FACET_COUNT 3
+#define MAX_FACET_COUNT 23
+#define MESH_COUNT (MAX_FACET_COUNT - MIN_FACET_COUNT)
 
-static int32_t g_facet_count = 3;
+#define SAMPLE_COUNT 4
+
+static sg_pipeline pip;
+static sg_bindings bindings;
+static sg_buffer vbufs[MESH_COUNT];
+static sg_buffer ibufs[MESH_COUNT];
+
+static float rx, ry;
+static int32_t g_facet_count = MIN_FACE_COUNT;
+
+static void bind_buffers_to_pipeline(void) {
+	bindings = (sg_bindings) {
+		.vertex_buffers[0] = vbufs[g_facet_count - MIN_FACET_COUNT],
+		.index_buffer = ibufs[g_facet_count - MIN_FACET_COUNT]
+	};
+}
+
+#ifdef EMSCRIPTEN
+EMSCRIPTEN_KEEPALIVE
+#endif
+int32_t increase_facets(void) {
+	++g_facet_count;
+	if (g_facet_count >= MAX_FACET_COUNT) g_facet_count = MAX_FACET_COUNT - 1;
+	bind_buffers_to_pipeline();
+	return g_facet_count;
+}
+
+#ifdef EMSCRIPTEN
+EMSCRIPTEN_KEEPALIVE
+#endif
+int32_t decrease_facets(void) {
+	--g_facet_count;
+	if (g_facet_count < MIN_FACET_COUNT) g_facet_count = MIN_FACET_COUNT;
+	bind_buffers_to_pipeline();
+	return g_facet_count;
+}
+
+static void gen_polygon_buffers(void) {
+	for (int32_t i = 0; i < MESH_COUNT; ++i) {
+		int32_t facet_count = i + MIN_FACET_COUNT;
+
+		size_t vertex_element_count = RP_GET_VERTEX_ELEMENT_COUNT(facet_count);
+		size_t index_element_count = RP_GET_INDEX_ELEMENT_COUNT(facet_count);
+		float *vertices = calloc(vertex_element_count, sizeof(float));
+		int16_t *indices = calloc(index_element_count, sizeof(int16_t));
+		rp_gen(facet_count, vertices, indices);
+
+		vbufs[i] = sg_make_buffer(&(sg_buffer_desc){
+			.size = vertex_element_count * sizeof(float),
+			.content = vertices,
+			.label = "rp-vertices"
+		});
+
+		ibufs[i] = sg_make_buffer(&(sg_buffer_desc){
+			.type = SG_BUFFERTYPE_INDEXBUFFER,
+			.size = index_element_count * sizeof(int16_t),
+			.content = indices,
+			.label = "rp-indices"
+		});
+	}
+	return;
+}
 
 static void init(void) {
 	sg_setup(&(sg_desc){
@@ -21,24 +81,8 @@ static void init(void) {
 		.mtl_drawable_cb = sapp_metal_get_drawable
 	});
 
-	size_t vertex_element_count = RP_GET_VERTEX_ELEMENT_COUNT(g_facet_count);
-	size_t index_element_count = RP_GET_INDEX_ELEMENT_COUNT(g_facet_count);
-	float *vertices = calloc(vertex_element_count, sizeof(float));
-	int16_t *indices = calloc(index_element_count, sizeof(int16_t));
-	rp_gen(g_facet_count, vertices, indices);
-
-	sg_buffer vbuf = sg_make_buffer(&(sg_buffer_desc){
-		.size = vertex_element_count * sizeof(float),
-		.content = vertices,
-		.label = "rp-vertices"
-	});
-
-	sg_buffer ibuf = sg_make_buffer(&(sg_buffer_desc){
-		.type = SG_BUFFERTYPE_INDEXBUFFER,
-		.size = index_element_count * sizeof(int16_t),
-		.content = indices,
-		.label = "rp-indices"
-	});
+	/* generate polygon buffers */
+	gen_polygon_buffers();
 
 	/* create shader */
 	sg_shader shd = sg_make_shader(demo_shader_desc());
@@ -46,7 +90,6 @@ static void init(void) {
 	/* create pipeline object */
 	pip = sg_make_pipeline(&(sg_pipeline_desc){
 		.layout = {
-			/* test to provide buffer stride, but no attr offsets */
 			.buffers[0].stride = 28,
 			.attrs = {
 				[ATTR_vs_position].format = SG_VERTEXFORMAT_FLOAT3,
@@ -64,23 +107,16 @@ static void init(void) {
 		.label = "rp-pipeline"
 	});
 
-	/* setup resource bindings */
-	bind = (sg_bindings) {
-		.vertex_buffers[0] = vbuf,
-		.index_buffer = ibuf
-	};
+	bind_buffers_to_pipeline();
 }
 
 static void event(const sapp_event* e) {
 	assert((e->type >= 0) && (e->type < _SAPP_EVENTTYPE_NUM));
 	if (e->type == SAPP_EVENTTYPE_KEY_UP) {
 		if (e->key_code == SAPP_KEYCODE_RIGHT) {
-			++g_facet_count;
-			init();
+			increase_facets();
 		} else if (e->key_code == SAPP_KEYCODE_LEFT) {
-			--g_facet_count;
-			if (g_facet_count < 3) g_facet_count = 3;
-			init();
+			decrease_facets();
 		}
 	}
 }
@@ -114,12 +150,12 @@ static void frame(void) {
 	sg_pass_action pass_action = {
 		.colors[0] = {
 			.action = SG_ACTION_CLEAR,
-			.val = { 0.25f, 0.5f, 0.75f, 1.0f } 
+			.val = { 0.25f, 0.5f, 0.75f, 1.0f }
 		}
 	};
 	sg_begin_default_pass(&pass_action, (int)w, (int)h);
 	sg_apply_pipeline(pip);
-	sg_apply_bindings(&bind);
+	sg_apply_bindings(&bindings);
 	sg_apply_uniforms(SG_SHADERSTAGE_VS, SLOT_vs_params, &vs_params, sizeof(vs_params));
 	sg_draw(0, RP_GET_INDEX_ELEMENT_COUNT(g_facet_count), 1);
 	sg_end_pass();
