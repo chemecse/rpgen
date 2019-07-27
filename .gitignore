@@ -1,2 +1,3 @@
 samples/demo/dist
 samples/demo/sokol-shdc
+*.swp

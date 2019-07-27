@@ -55,7 +55,14 @@ static void gen_polygon_buffers(void) {
 		size_t index_element_count = RP_GET_INDEX_ELEMENT_COUNT(facet_count);
 		float *vertices = calloc(vertex_element_count, sizeof(float));
 		int16_t *indices = calloc(index_element_count, sizeof(int16_t));
-		rp_gen(facet_count, vertices, indices);
+
+        rp_gen(&(struct rp_data){
+            .vertices = vertices,
+            .indices = indices,
+            .facet_count = facet_count,
+            .facet_radius = 2.0f,
+            .extrusion_depth = 0.3f
+        });
 
 		vbufs[i] = sg_make_buffer(&(sg_buffer_desc){
 			.size = vertex_element_count * sizeof(float),

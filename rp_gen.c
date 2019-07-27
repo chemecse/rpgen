@@ -4,8 +4,18 @@
 
 #define RP_PI32 3.14159265359f
 
-void rp_gen(int32_t facet_count, float *vertices, int16_t *indices) {
+void rp_gen(struct rp_data *data)
+{
+	float *vertices = data->vertices;
+	int16_t *indices = data->indices;
+	const int32_t facet_count = data->facet_count;
+	const float facet_radius = data->facet_radius;
+	const float extrusion_depth = data->extrusion_depth;
+
+	assert(vertices && indices);
 	assert(facet_count >= 3);
+	assert(facet_radius > 0.0f);
+	assert(extrusion_depth > 0.0f);
 
 	const float facet_rad = RP_PI32 * 2.0f / (float)facet_count;
 
@@ -28,8 +38,8 @@ void rp_gen(int32_t facet_count, float *vertices, int16_t *indices) {
 	for (int32_t facet_idx = 0; facet_idx < facet_count; ++facet_idx) {
 		int32_t idx = facet_idx * RP_VERTEX_STRIDE + vertex_offset;
 		float rad = facet_rad * facet_idx;
-		vertices[idx + 0] = sinf(rad) * RP_FACET_RADIUS;
-		vertices[idx + 1] = cosf(rad) * RP_FACET_RADIUS;
+		vertices[idx + 0] = sinf(rad) * facet_radius;
+		vertices[idx + 1] = cosf(rad) * facet_radius;
 		vertices[idx + 2] = 0.0f;
 		vertices[idx + 3] = front_face_color_r;
 		vertices[idx + 4] = front_face_color_g;
@@ -43,8 +53,8 @@ void rp_gen(int32_t facet_count, float *vertices, int16_t *indices) {
 	for (int32_t facet_idx = 0; facet_idx < facet_count; ++facet_idx) {
 		int32_t idx = facet_idx * RP_VERTEX_STRIDE + vertex_offset;
 		float rad = facet_rad * facet_idx;
-		vertices[idx + 0] = sinf(rad) * RP_FACET_RADIUS;
-		vertices[idx + 1] = cosf(rad) * RP_FACET_RADIUS;
+		vertices[idx + 0] = sinf(rad) * facet_radius;
+		vertices[idx + 1] = cosf(rad) * facet_radius;
 		vertices[idx + 2] = 0.0f;
 		vertices[idx + 3] = edge_color_r;
 		vertices[idx + 4] = edge_color_g;
@@ -58,9 +68,9 @@ void rp_gen(int32_t facet_count, float *vertices, int16_t *indices) {
 	for (int32_t facet_idx = 0; facet_idx < facet_count; ++facet_idx) {
 		int32_t idx = facet_idx * RP_VERTEX_STRIDE + vertex_offset;
 		float rad = facet_rad * facet_idx;
-		vertices[idx + 0] = sinf(rad) * RP_FACET_RADIUS;
-		vertices[idx + 1] = cosf(rad) * RP_FACET_RADIUS;
-		vertices[idx + 2] = -RP_DEPTH;
+		vertices[idx + 0] = sinf(rad) * facet_radius;
+		vertices[idx + 1] = cosf(rad) * facet_radius;
+		vertices[idx + 2] = -extrusion_depth;
 		vertices[idx + 3] = back_face_color_r;
 		vertices[idx + 4] = back_face_color_g;
 		vertices[idx + 5] = back_face_color_b;
@@ -73,9 +83,9 @@ void rp_gen(int32_t facet_count, float *vertices, int16_t *indices) {
 	for (int32_t facet_idx = 0; facet_idx < facet_count; ++facet_idx) {
 		int32_t idx = facet_idx * RP_VERTEX_STRIDE + vertex_offset;
 		float rad = facet_rad * facet_idx;
-		vertices[idx + 0] = sinf(rad) * RP_FACET_RADIUS;
-		vertices[idx + 1] = cosf(rad) * RP_FACET_RADIUS;
-		vertices[idx + 2] = -RP_DEPTH;
+		vertices[idx + 0] = sinf(rad) * facet_radius;
+		vertices[idx + 1] = cosf(rad) * facet_radius;
+		vertices[idx + 2] = -extrusion_depth;
 		vertices[idx + 3] = edge_color_r;
 		vertices[idx + 4] = edge_color_g;
 		vertices[idx + 5] = edge_color_b;
@@ -98,7 +108,7 @@ void rp_gen(int32_t facet_count, float *vertices, int16_t *indices) {
 	int32_t back_center_vertex = vertex_offset / RP_VERTEX_STRIDE;
 	vertices[vertex_offset + 0] = 0.0f;
 	vertices[vertex_offset + 1] = 0.0f;
-	vertices[vertex_offset + 2] = -RP_DEPTH;
+	vertices[vertex_offset + 2] = -extrusion_depth;
 	vertices[vertex_offset + 3] = back_face_color_r;
 	vertices[vertex_offset + 4] = back_face_color_g;
 	vertices[vertex_offset + 5] = back_face_color_b;
