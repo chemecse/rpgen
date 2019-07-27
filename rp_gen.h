@@ -4,13 +4,12 @@
 #include <stdint.h>
 
 #define RP_VERTEX_STRIDE 7
-// TODO(lars): document calculations
+// 4 vertices per facet (1 front face, 1 back face, 2 edge) + 2 center vertices
 #define RP_GET_VERTEX_ELEMENT_COUNT(facet_count) ((facet_count * 4 + 2) * RP_VERTEX_STRIDE)
 
 #define RP_INDEX_STRIDE 3
-// TODO(lars): document calculations
-#define RP_GET_INDEX_ELEMENT_COUNT(facet_count) (facet_count * (3 + 3 + 6))
-
+// 4 triangles per facet (each triangle represented by 3 indicies)
+#define RP_GET_INDEX_ELEMENT_COUNT(facet_count) ((facet_count * 4) * RP_INDEX_STRIDE)
 
 struct rp_data {
 	float *vertices;
