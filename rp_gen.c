@@ -1,16 +1,25 @@
 #include "rp_gen.h"
-#include "watt_math.h"
 #include <math.h>
 #include <assert.h>
+
+#define RP_PI32 3.14159265359f
 
 void rp_gen(int32_t facet_count, float *vertices, int16_t *indices) {
 	assert(facet_count >= 3);
 
-	const float facet_rad = WATT_PI32 * 2.0f / (float)facet_count;
+	const float facet_rad = RP_PI32 * 2.0f / (float)facet_count;
 
-	struct vec3 front_face_color = v3(1.0f, 0.0f, 0.0f);
-	struct vec3 back_face_color = v3(0.0f, 0.0f, 1.0f);
-	struct vec3 edge_color = v3(0.0f, 1.0f, 0.0f);
+	const float front_face_color_r = 1.0f;
+	const float front_face_color_g = 0.0f;
+	const float front_face_color_b = 0.0f;
+
+	const float back_face_color_r = 0.0f;
+	const float back_face_color_g = 0.0f;
+	const float back_face_color_b = 1.0f;
+
+	const float edge_color_r = 0.0f;
+	const float edge_color_g = 1.0f;
+	const float edge_color_b = 0.0f;
 
 	int32_t vertex_offset = 0;
 
@@ -22,9 +31,9 @@ void rp_gen(int32_t facet_count, float *vertices, int16_t *indices) {
 		vertices[idx + 0] = sinf(rad) * RP_FACET_RADIUS;
 		vertices[idx + 1] = cosf(rad) * RP_FACET_RADIUS;
 		vertices[idx + 2] = 0.0f;
-		vertices[idx + 3] = front_face_color.x;
-		vertices[idx + 4] = front_face_color.y;
-		vertices[idx + 5] = front_face_color.z;
+		vertices[idx + 3] = front_face_color_r;
+		vertices[idx + 4] = front_face_color_g;
+		vertices[idx + 5] = front_face_color_b;
 		vertices[idx + 6] = 1.0f;
 	}
 	vertex_offset += (facet_count * RP_VERTEX_STRIDE);
@@ -37,9 +46,9 @@ void rp_gen(int32_t facet_count, float *vertices, int16_t *indices) {
 		vertices[idx + 0] = sinf(rad) * RP_FACET_RADIUS;
 		vertices[idx + 1] = cosf(rad) * RP_FACET_RADIUS;
 		vertices[idx + 2] = 0.0f;
-		vertices[idx + 3] = edge_color.x;
-		vertices[idx + 4] = edge_color.y;
-		vertices[idx + 5] = edge_color.z;
+		vertices[idx + 3] = edge_color_r;
+		vertices[idx + 4] = edge_color_g;
+		vertices[idx + 5] = edge_color_b;
 		vertices[idx + 6] = 1.0f;
 	}
 	vertex_offset += (facet_count * RP_VERTEX_STRIDE);
@@ -52,9 +61,9 @@ void rp_gen(int32_t facet_count, float *vertices, int16_t *indices) {
 		vertices[idx + 0] = sinf(rad) * RP_FACET_RADIUS;
 		vertices[idx + 1] = cosf(rad) * RP_FACET_RADIUS;
 		vertices[idx + 2] = -RP_DEPTH;
-		vertices[idx + 3] = back_face_color.x;
-		vertices[idx + 4] = back_face_color.y;
-		vertices[idx + 5] = back_face_color.z;
+		vertices[idx + 3] = back_face_color_r;
+		vertices[idx + 4] = back_face_color_g;
+		vertices[idx + 5] = back_face_color_b;
 		vertices[idx + 6] = 1.0f;
 	}
 	vertex_offset += (facet_count * RP_VERTEX_STRIDE);
@@ -67,9 +76,9 @@ void rp_gen(int32_t facet_count, float *vertices, int16_t *indices) {
 		vertices[idx + 0] = sinf(rad) * RP_FACET_RADIUS;
 		vertices[idx + 1] = cosf(rad) * RP_FACET_RADIUS;
 		vertices[idx + 2] = -RP_DEPTH;
-		vertices[idx + 3] = edge_color.x;
-		vertices[idx + 4] = edge_color.y;
-		vertices[idx + 5] = edge_color.z;
+		vertices[idx + 3] = edge_color_r;
+		vertices[idx + 4] = edge_color_g;
+		vertices[idx + 5] = edge_color_b;
 		vertices[idx + 6] = 1.0f;
 	}
 	vertex_offset += (facet_count * RP_VERTEX_STRIDE);
@@ -79,9 +88,9 @@ void rp_gen(int32_t facet_count, float *vertices, int16_t *indices) {
 	vertices[vertex_offset + 0] = 0.0f;
 	vertices[vertex_offset + 1] = 0.0f;
 	vertices[vertex_offset + 2] = 0.0f;
-	vertices[vertex_offset + 3] = front_face_color.x;
-	vertices[vertex_offset + 4] = front_face_color.y;
-	vertices[vertex_offset + 5] = front_face_color.z;
+	vertices[vertex_offset + 3] = front_face_color_r;
+	vertices[vertex_offset + 4] = front_face_color_g;
+	vertices[vertex_offset + 5] = front_face_color_b;
 	vertices[vertex_offset + 6] = 1.0f;
 	vertex_offset += RP_VERTEX_STRIDE;
 
@@ -90,9 +99,9 @@ void rp_gen(int32_t facet_count, float *vertices, int16_t *indices) {
 	vertices[vertex_offset + 0] = 0.0f;
 	vertices[vertex_offset + 1] = 0.0f;
 	vertices[vertex_offset + 2] = -RP_DEPTH;
-	vertices[vertex_offset + 3] = back_face_color.x;
-	vertices[vertex_offset + 4] = back_face_color.y;
-	vertices[vertex_offset + 5] = back_face_color.z;
+	vertices[vertex_offset + 3] = back_face_color_r;
+	vertices[vertex_offset + 4] = back_face_color_g;
+	vertices[vertex_offset + 5] = back_face_color_b;
 	vertices[vertex_offset + 6] = 1.0f;
 	vertex_offset += RP_VERTEX_STRIDE;
 
