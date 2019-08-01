@@ -13,7 +13,7 @@
 
 struct rp_data {
 	float *vertices;
-	int16_t *indices;
+	uint16_t *indices;
 	int32_t facet_count;
 	float facet_radius;
 	float extrusion_depth;

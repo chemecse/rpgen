@@ -7,7 +7,7 @@
 void rp_gen(struct rp_data *data)
 {
 	float *vertices = data->vertices;
-	int16_t *indices = data->indices;
+	uint16_t *indices = data->indices;
 	const int32_t facet_count = data->facet_count;
 	const float facet_radius = data->facet_radius;
 	const float extrusion_depth = data->extrusion_depth;
@@ -118,7 +118,7 @@ void rp_gen(struct rp_data *data)
 	int32_t index_offset = 0;
 
 	// front face indices
-	for (int16_t i = 0; i < facet_count; i += 1) {
+	for (uint16_t i = 0; i < facet_count; i += 1) {
 		int32_t idx = index_offset + i * RP_INDEX_STRIDE;
 		indices[idx + 0] = front_center_vertex;
 		indices[idx + 1] = front_facet_start_vertex + i;
@@ -127,7 +127,7 @@ void rp_gen(struct rp_data *data)
 	index_offset += facet_count * RP_INDEX_STRIDE;
 
 	// back face indices
-	for (int16_t i = 0; i < facet_count; i += 1) {
+	for (uint16_t i = 0; i < facet_count; i += 1) {
 		int32_t idx = index_offset + i * RP_INDEX_STRIDE;
 		indices[idx + 0] = back_center_vertex;
 		indices[idx + 1] = back_facet_start_vertex + (i + 1) % facet_count;
@@ -136,15 +136,15 @@ void rp_gen(struct rp_data *data)
 	index_offset += facet_count * RP_INDEX_STRIDE;
 
 	// edge indices
-	for (int16_t i = 0; i < facet_count; i += 1) {
-		int16_t start_vertex = (int16_t)front_edge_start_vertex + i;
-		int16_t end_vertex = (int16_t)back_edge_start_vertex + (i + 1) % facet_count;
+	for (uint16_t i = 0; i < facet_count; i += 1) {
+		uint16_t start_vertex = (uint16_t)front_edge_start_vertex + i;
+		uint16_t end_vertex = (uint16_t)back_edge_start_vertex + (i + 1) % facet_count;
 		int32_t idx = index_offset + i * (RP_INDEX_STRIDE * 2);
 		indices[idx + 0] = start_vertex;
-		indices[idx + 1] = (int16_t)back_edge_start_vertex + i;
+		indices[idx + 1] = (uint16_t)back_edge_start_vertex + i;
 		indices[idx + 2] = end_vertex;
 		indices[idx + 3] = end_vertex;
-		indices[idx + 4] = (int16_t)front_edge_start_vertex + (i + 1) % facet_count;
+		indices[idx + 4] = (uint16_t)front_edge_start_vertex + (i + 1) % facet_count;
 		indices[idx + 5] = start_vertex;
 	}
 	index_offset += facet_count * (RP_INDEX_STRIDE * 2);

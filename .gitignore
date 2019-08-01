@@ -1,3 +1,4 @@
 samples/demo/dist
 samples/demo/sokol-shdc
+samples/gltf/examples
 *.swp

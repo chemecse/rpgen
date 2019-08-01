@@ -54,15 +54,15 @@ static void gen_polygon_buffers(void) {
 		size_t vertex_element_count = RP_GET_VERTEX_ELEMENT_COUNT(facet_count);
 		size_t index_element_count = RP_GET_INDEX_ELEMENT_COUNT(facet_count);
 		float *vertices = calloc(vertex_element_count, sizeof(float));
-		int16_t *indices = calloc(index_element_count, sizeof(int16_t));
+		uint16_t *indices = calloc(index_element_count, sizeof(uint16_t));
 
-        rp_gen(&(struct rp_data){
-            .vertices = vertices,
-            .indices = indices,
-            .facet_count = facet_count,
-            .facet_radius = 2.0f,
-            .extrusion_depth = 0.3f
-        });
+		rp_gen(&(struct rp_data){
+			.vertices = vertices,
+			.indices = indices,
+			.facet_count = facet_count,
+			.facet_radius = 2.0f,
+			.extrusion_depth = 0.3f
+		});
 
 		vbufs[i] = sg_make_buffer(&(sg_buffer_desc){
 			.size = vertex_element_count * sizeof(float),
@@ -72,7 +72,7 @@ static void gen_polygon_buffers(void) {
 
 		ibufs[i] = sg_make_buffer(&(sg_buffer_desc){
 			.type = SG_BUFFERTYPE_INDEXBUFFER,
-			.size = index_element_count * sizeof(int16_t),
+			.size = index_element_count * sizeof(uint16_t),
 			.content = indices,
 			.label = "rp-indices"
 		});
