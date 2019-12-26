@@ -3,3 +3,5 @@ samples/demo/sokol-shdc
 samples/gltf/examples
 samples/gltf/gltfwriter
 *.swp
+*.DS_Store
+
