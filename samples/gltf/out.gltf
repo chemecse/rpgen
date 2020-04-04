@@ -1,0 +1,87 @@
+{
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5123,
+      "type": "SCALAR",
+      "count": 36
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "type": "VEC3",
+      "count": 14
+    },
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "type": "VEC4",
+      "count": 14
+    }
+  ],
+  "asset": {
+    "generator": "rpgen",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 72
+    },
+    {
+      "buffer": 0,
+      "byteLength": 392,
+      "byteOffset": 120,
+      "byteStride": 28
+    },
+    {
+      "buffer": 0,
+      "byteLength": 380,
+      "byteOffset": 132,
+      "byteStride": 28
+    }
+  ],
+  "buffers": [
+    {
+      "uri": "out.bin",
+      "byteLength": 736
+    }
+  ],
+  "meshes": [
+    {
+      "name": "rpgen-mesh",
+      "primitives": [
+        {
+          "indices": 0,
+          "material": 0,
+          "attributes": {
+            "POSITION": 1,
+            "COLOR_0": 2
+          }
+        }
+      ]
+    }
+  ],
+  "materials": [
+    {
+      "alphaCutoff": 0,
+      "pbrMetallicRoughness": {
+        "metallicFactor": 0
+      }
+    }
+  ],
+  "nodes": [
+    {
+      "children": [ 1 ]
+    },
+    {
+      "mesh": 0
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [ 0 ]
+    }
+  ]
+}

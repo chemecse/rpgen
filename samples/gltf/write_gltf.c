@@ -16,7 +16,7 @@ struct write_data {
 };
 
 int main(void) {
-	const int32_t facet_count = 3;
+	const int32_t facet_count = 5;
 	const int32_t vertex_element_count = RP_GET_VERTEX_ELEMENT_COUNT(facet_count);
 	const int32_t index_element_count = RP_GET_INDEX_ELEMENT_COUNT(facet_count);
 
